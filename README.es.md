@@ -1,0 +1,223 @@
+# i18n Translation Automation
+
+[Read this manual in English](README.md)
+
+Una herramienta de CLI en Python especializada en automatizar flujos de traducción i18n para el desarrollo de aplicaciones web multilingües. Escribe tus textos fuente en un único idioma y tradúcelos instantáneamente a múltiples idiomas destino utilizando las APIs de traducción de tu elección (DeepL/Azure), manteniendo un archivo estructurado `messages.json` con copias de seguridad automáticas y registros mensuales de cambios.
+
+---
+
+## Características
+
+- **Múltiples Proveedores de Traducción**: Soporte nativo incorporado para DeepL (por defecto) y Azure Translator, con una interfaz limpia para añadir APIs personalizadas de forma rápida.
+- **Tres Modos de Operación Clave**:
+  1. **Modo de Comando Único** (`i18n add`): Agrega y traduce de forma instantánea una única entrada clave-valor.
+  2. **Modo de Importación por Lotes** (`i18n import`): Importa y traduce de forma masiva múltiples claves desde un JSON plano o un archivo CSV simple de 2 columnas.
+  3. **Modo Interactivo** (`i18n interactive`): Introduce múltiples claves de traducción de forma recursiva en un bucle interactivo optimizado.
+- **Asistente de Configuración Rápido y Sencillo**: Configura tu proveedor, idioma origen, idiomas destino y rutas de archivos en cuestión de minutos.
+- **Copias de Seguridad Automáticas**: Crea una copia de seguridad con marca de tiempo de tu `messages.json` en la carpeta `backups/` antes de cada operación de escritura.
+- **Registro Mensual de Cambios**: Genera registros mensuales organizados en `changelog/YYYY-MM.log` que documentan cada una de las traducciones realizadas.
+- **Modo Dry-run**: Prueba y previsualiza las traducciones directamente en la consola usando la bandera `--dry-run` sin modificar tus archivos locales.
+- **Seguridad contra Sobreescrituras**: Aborta con una advertencia si la clave ya existe en el JSON, evitando sobreescrituras accidentales a menos que se especifique la bandera `--force`.
+
+---
+
+## Guías Detalladas
+
+Para acceder a guías exhaustivas, explicaciones paso a paso sobre cómo obtener claves API, comparativas de rendimiento de proveedores y configuraciones personalizadas, consulte el directorio de documentación:
+- [English User Guide](docs/guide.md)
+- [Guía de Usuario en Español](docs/guia.md)
+
+---
+
+## Requisitos
+
+- Python 3.9 o superior.
+- Una clave API válida para tu proveedor de traducción elegido (por ejemplo, una clave de API Gratuita de DeepL o una suscripción de Azure Translator).
+
+---
+
+## Primeros Pasos
+
+### 1. Clonar el Repositorio
+Clona este repositorio en tu sistema local e ingresa a la carpeta del proyecto:
+```bash
+git clone https://github.com/Daclapo/i18n-TranslationAutomation.git
+cd i18n-TranslationAutomation
+```
+
+### 2. Configurar el Entorno Virtual
+Se recomienda utilizar un entorno virtual de Python:
+```bash
+# Crear entorno virtual
+python3 -m venv venv
+
+# Activar en macOS/Linux
+source venv/bin/activate
+
+# Activar en Windows (cmd)
+venv\Scripts\activate.bat
+
+# Activar en Windows (PowerShell)
+.\venv\Scripts\Activate.ps1
+```
+
+### 3. Instalar el Paquete (Modo Editable)
+Instala el proyecto y sus dependencias de desarrollo localmente:
+```bash
+pip install -e ".[dev]"
+```
+Esto registrará el comando global `i18n` en tu terminal actual.
+
+### 4. Configurar las Claves de API
+Copia la plantilla de variables de entorno y añade tus credenciales de API:
+```bash
+cp .env.example .env
+```
+Abre el archivo `.env` resultante y completa tus credenciales de DeepL o Azure:
+```env
+DEEPL_API_KEY=tu-clave-real-de-deepl-aqui
+```
+*(El archivo `.env` que contiene tus claves reales está excluido de Git en `.gitignore` por seguridad y no se subirá al repositorio público)*.
+
+### 5. Ejecutar el Asistente de Configuración
+Inicializa la configuración de tu herramienta:
+```bash
+i18n setup
+```
+El asistente te guiará de forma interactiva:
+1. **Translation provider (Proveedor)**: Elige `deepl` o `azure`.
+2. **API key (Clave)**: Escribe `env:DEEPL_API_KEY` para cargar la clave de forma segura desde las variables de entorno (`.env`) sin exponerla directamente en texto plano en el archivo de configuración.
+3. **Source language (Idioma origen)**: Código del idioma base (ej., `ES` para Español).
+4. **Target languages (Idiomas destino)**: Lista separada por comas (ej., `EN, PT-BR`).
+5. **Messages file path (Ruta de salida)**: Dónde guardar el archivo JSON (ej., `data/messages.json`).
+
+Esto generará el archivo `config.yaml` en la raíz del proyecto.
+
+---
+
+## Guía de Uso
+
+### 1. Añadir una única traducción
+Traduce un texto base en Español a todos tus idiomas de destino configurados:
+```bash
+i18n add home.hero.title "Bienvenido a nuestra plataforma de automatización"
+```
+**Opciones disponibles:**
+- `--dry-run`: Previsualiza las traducciones generadas por la API en la consola sin guardarlas en el archivo JSON.
+- `--force`: Sobreescribe la clave de traducción automáticamente si ya existe, sin pedir confirmación manual.
+
+### 2. Importación masiva por lotes
+Importa y traduce entradas completas desde un archivo externo:
+```bash
+i18n import nuevas_traducciones.csv
+# o
+i18n import nuevas_traducciones.json
+```
+- **Formato CSV**: Archivo de dos columnas con cabecera (columna 1: key, columna 2: el código de idioma base (ej., es), text o value):
+  ```csv
+  key,es
+  nav.about,"Sobre Nosotros"
+  nav.contact,"Contacta con nuestro equipo"
+  ```
+- **Formato JSON**: Un objeto JSON plano de tipo clave-valor:
+  ```json
+  {
+    "button.submit": "Enviar solicitud",
+    "button.cancel": "Cancelar operación"
+  }
+  ```
+
+### 3. Bucle interactivo por consola
+Ingresa en un bucle interactivo que te permite añadir múltiples entradas sin tener que ejecutar comandos CLI repetidamente:
+```bash
+i18n interactive
+```
+*Deja la clave vacía o presiona `Ctrl+C` para salir del bucle interactivo de manera segura.*
+
+---
+
+## Estructura del JSON de Salida
+
+Todas tus traducciones se compilan en un único archivo estructurado `messages.json` dentro de tu carpeta de datos:
+
+```json
+{
+  "es": {
+    "home.hero.title": "Bienvenido a nuestra plataforma de automatización",
+    "nav.about": "Sobre Nosotros"
+  },
+  "en": {
+    "home.hero.title": "Welcome to our automation platform",
+    "nav.about": "About Us"
+  },
+  "pt-br": {
+    "home.hero.title": "Bem-vindo à nossa plataforma de automação",
+    "nav.about": "Sobre Nós"
+  }
+}
+```
+
+---
+
+## Desarrollo, Pruebas y Extensibilidad
+
+### Ejecutar Pruebas Unitarias
+Las pruebas automatizadas residen en el directorio `tests/` y utilizan mocks para simular las llamadas a las APIs de traducción. No requieren conexión a internet ni claves reales para ejecutarse:
+```bash
+pytest tests/ -v
+```
+
+### Añadir un Proveedor Personalizado
+Añadir soporte para un nuevo motor de traducción (ej., OpenAI, Google Cloud Translator, AWS Translate) es muy sencillo:
+1. Crea un nuevo archivo dentro de `src/i18n_manager/providers/` (ej., `mi_proveedor.py`).
+2. Hereda de la clase base abstracta `TranslationProvider` e implementa el método `translate`:
+   ```python
+   from i18n_manager.providers.base import TranslationProvider
+
+   class MiProveedor(TranslationProvider):
+       def __init__(self, api_key: str, **kwargs):
+           self.api_key = api_key
+
+       def translate(self, text: str, source_lang: str, target_lang: str) -> str:
+           # Implementa tu llamada HTTP/API de traducción aquí
+           return texto_traducido
+   ```
+3. Registra tu nueva clase en `src/i18n_manager/providers/__init__.py`:
+   ```python
+   from i18n_manager.providers.mi_proveedor import MiProveedor
+   PROVIDER_REGISTRY["miproveedor"] = MyCustomProvider
+   ```
+4. Ejecuta `i18n setup` y selecciona `miproveedor` como tu proveedor activo.
+
+---
+
+## Estructura de Archivos del Proyecto
+
+```
+i18n-TranslationAutomation/
+├── pyproject.toml          # Metadatos del paquete, comandos de CLI y dependencias
+├── config.yaml             # Configuración del usuario (generada por setup)
+├── .env                    # Claves API locales (ignorado por git - ver plantilla .env.example)
+├── .env.example            # Plantilla de variables de entorno para nuevas clonaciones
+├── .gitignore              # Exclusiones de Git (venv, .env, backups, caches)
+├── CONTEXT.md              # Resumen técnico de arquitectura y decisiones de diseño
+├── docs/                   # Guías exhaustivas de usuario
+│   ├── guide.md            # Guía detallada en inglés
+│   └── guia.md             # Guía detallada en español
+├── data/
+│   └── messages.json       # Archivo JSON principal de almacenamiento de traducciones
+├── src/
+│   └── i18n_manager/       # Raíz del código fuente
+│       ├── cli.py          # Definición de comandos de la CLI (click)
+│       ├── config.py       # Lector de configuraciones y variables de entorno
+│       ├── storage.py      # Gestor atómico de JSON, copias de seguridad y logs de cambios
+│       ├── translator.py   # Orquestador del flujo de traducción
+│       └── providers/      # Proveedores de traducción
+│           ├── __init__.py # Registro de proveedores
+│           ├── base.py     # Clase base abstracta TranslationProvider
+│           ├── deepl_provider.py
+│           └── azure_provider.py
+├── backups/                # Copias de seguridad automáticas con marcas de tiempo
+├── changelog/              # Logs históricos mensuales (changelog/YYYY-MM.log)
+└── tests/                  # Suite completa de pruebas unitarias simuladas (mocked)
+```
