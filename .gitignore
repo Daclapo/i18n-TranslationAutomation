@@ -1,0 +1,39 @@
+# Environment variables (API keys)
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project backups and logs (generated at runtime)
+backups/
+changelog/
+
+# Pytest cache
+.pytest_cache/
+.pytest_cache
+
+# Byte-compiled
+*.pyc

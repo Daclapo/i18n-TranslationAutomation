@@ -1,0 +1,7 @@
+provider: deepl
+api_key: env:DEEPL_API_KEY
+source_language: ES
+target_languages:
+  - EN
+  - PT-BR
+messages_file: data/messages.json

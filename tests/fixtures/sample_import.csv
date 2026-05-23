@@ -1,0 +1,11 @@
+key,es
+home.title,Bienvenido a nuestra plataforma
+home.subtitle,Descubre todo lo que podemos ofrecerte
+home.description,Nuestra plataforma ofrece las mejores herramientas para gestionar tu negocio
+auth.login.button,Iniciar sesion
+auth.login.title,Acceso a tu cuenta
+auth.register.button,Crear cuenta nueva
+auth.register.title,Registro de usuario
+nav.home,Inicio
+nav.about,Acerca de nosotros
+nav.contact,Contacto
